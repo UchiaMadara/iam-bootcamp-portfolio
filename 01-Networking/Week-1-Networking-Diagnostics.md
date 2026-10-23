@@ -4,8 +4,9 @@
 To map my local network topology and test DNS/Port
 connectivity to establish a baseline for IAM troubleshooting.
 
-# Commands Run & Output
-*ip a* 
+## Commands Run & Output
+*ip a*
+
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -19,8 +20,7 @@ connectivity to establish a baseline for IAM troubleshooting.
     inet 192.168.1.6/24 brd 192.168.1.255 scope global dynamic noprefixroute wlp2s0
        valid_lft 3164sec preferred_lft 3164sec
     inet6 2402:800:6e1a:89b5:48ef:441e:1dfc:aa24/64 scope global temporary dynamic 
-       valid_lft 79431sec preferred_lft 79431sec
-    inet6 2402:800:6e1a:89b5:20cc:8c08:bc21:dd19/64 scope global dynamic mngtmpaddr noprefixroute 
+       valid_lft 79431sec preferred_lft 79431sec    inet6 2402:800:6e1a:89b5:20cc:8c08:bc21:dd19/64 scope global dynamic mngtmpaddr noprefixroute 
        valid_lft 79431sec preferred_lft 79431sec
     inet6 fe80::f262:a098:573:513a/64 scope link noprefixroute 
        valid_lft forever preferred_lft forever
@@ -34,8 +34,9 @@ Server:		127.0.0.53
 Address:	127.0.0.53#53
 
 *nslookup* (google.com)
-Non-authoritative answer:
-Name:	go ogle.com
+Server:		127.0.0.53
+Address:	127.0.0.53#53
+
 Address: 142.250.199.206
 Name:	google.com
 Address: 2404:6800:4005:81b::200e
@@ -65,8 +66,6 @@ are connected to the internet
  
   Check and test DNS
 - *cat /etc/resolv.conf*  or *nslookup* (works for both linux and windows) 
-
-
 
 # Troubleshooting Scenario (Mock Interview Prep)
 In this exercise i will break the DNS by assigning a DNS that wont resovle
