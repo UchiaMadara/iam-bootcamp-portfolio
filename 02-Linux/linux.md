@@ -1,4 +1,4 @@
-## Week 1: Linux 
+## Week 1: Linux user and group management
 
 # Goal
 To get an understanding of bacis commands for navigation and to understand
@@ -30,7 +30,7 @@ To get an understanding of bacis commands for navigation and to understand
 - *id alex* find out user information userid, groupdid
 - *id taylor*
 
-- *sudo usermod -aG iam-admins taylor*
+- *sudo usermod -aG iam-admins taylor* adds to new group and stays in old
 - *sudo usermod -G iam-admins taylor*     # OVERWRITES, removes taylor from iam-hr
 
        -aG  Append additional groups (must be used together), add to more groups
@@ -47,10 +47,11 @@ To get an understanding of bacis commands for navigation and to understand
 	        department transfers
 	-u  Change UID	Rare, but needed during migrations
 
+- *sudo gpasswd -a username groupname *  adds user 
+- *sudo userdel username* removes user 
+- *sudo groupdel (groupname)* deletes a group
 - *getent passwd* Used to verify changes made or user created
 
-- *gpasswd* removes user and removes them from group(sudo gpasswd -d taylor iam-admins
-            `group name`)
 
 # Different Shells
 
