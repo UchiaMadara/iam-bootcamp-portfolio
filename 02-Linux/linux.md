@@ -46,3 +46,64 @@ To get an understanding of bacis commands for navigation and to understand
     -d + -m	Modify home directory + move contents. Directory adjustments during
 	        department transfers
 	-u  Change UID	Rare, but needed during migrations
+
+- *getent passwd* Used to verify changes made or user created
+
+- *gpasswd* removes user and removes them from group(sudo gpasswd -d taylor iam-admins
+            `group name`)
+
+# Different Shells
+
+- */bin/bash*	Bourne Again Shell, Ubuntu's default login shell.Normal interactive
+   users use this; when you run useradd -s /bin/bash in your lab, you're specifying it
+- */bin/sh*     System's default shell (usually points to dash in Ubuntu).Script execution
+   uses this, not for manual login
+- */sbin/nologin* "Reject login" shell	Key point: After a user is set to this, they cannot
+   log in interactively; commonly used for service accounts or accounts pending disabling
+- */usr/sbin/nologin*	Same as above, slightly different path depending on distribution. 
+   Treat it as equivalent to /sbin/nologin
+- */bin/false*	Returns failure directly and exits. Older practice for disabling login;
+   rarely used now, nologin is more common.
+
+#Troubleshhoting possible issues
+I ran some command to tcheck the output to varify user account and groups
+	User / Group / Password state
+- *groups taylor* what groups are they in
+- *sudo passwd -S taylor* shows that they have a password and when it expires
+- *sudo chage -l taylor* confirms password length and if the account is live or not
+- *getent group iam-hr*  shows every account ecept if it is the users primary account
+   in which case it there account wont show up.
+- *sudo grep -E '^(alex|taylor):' /etc/shadow | awk -F: '{print $1, $3, $5, $8}'*
+
+	/home navigation + permissions evidence
+This was to check were i currently am, what users are on the system and
+ permissions to access accounts.
+ 
+- *cd /home/ ; pwd ; ls -la*
+- *cd /home/taylor ; pwd*          
+- *sudo ls -la /home/taylor*
+
+	~ vs /home proof
+This shows multiple ways to find home
+- *echo "HOME=$HOME"*
+- *ls -d /home ; ls -d ~*
+- *ls ~/..*    
+
+	the -aG two-direction drill (the actual warm-up)
+- *sudo usermod -aG iam-admins taylor* adds to the group while remaining in the
+   home directory
+- *id taylor*   check if they appear in both groups
+- *sudo gpasswd -d taylor iam-admins* remove from group
+*id taylor*   check removal from group
+
+#Notes
+1- *getent group iam-hr* shows empty members because taylor's primary group
+  is iam-hr (set via *useradd -g*), stored in `/etc/passwd` field 4, NOT in
+  `/etc/group`. groups and id show it correctly. This is the #1 cause of
+  "user not in group" false alarms in L1 tickets.
+2- *sudo cd /home/taylor* → sudo: 'cd': command not found. Cause: cd is a
+ shell builtin, not an external binary; sudo wraps binaries only. Workaround:
+ sudo -i then cd, or *sudo ls -al /home/taylor*, or su taylor sudo cd /home/taylor
+ → sudo: 'cd': command not found. Cause: cd is a shell builtin, not an external
+ binary; sudo wraps binaries only. Workaround: sudo -i then cd, or
+ *sudo ls -al /home/taylor*, or *su taylor*
