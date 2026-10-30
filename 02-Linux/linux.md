@@ -512,3 +512,64 @@ Use symbolic to tweak one thing. Use numeric to set a known state.
 
   # 4. Verify
   ls -ld /srv/iamlab /srv/iamlab/*
+
+# umask
+
+`Definition` — a subtraction mask applied at file/dir creation.
+Not a permission itself — a "remove these bits" instruction.
+
+`Formula`
+  Directory: base 777  - umask = result
+  File:      base 666  - umask = result
+
+`Examples`
+  umask 022 → dirs 755, files 644  (textbook default)
+  umask 002 → dirs 775, files 664  (Ubuntu user default — group-writable)
+  umask 027 → dirs 750, files 640  (server default)
+  umask 077 → dirs 700, files 600  (private)
+
+`Check / set`
+  umask          # show current (e.g. 0022)
+  umask -S       # symbolic (u=rwx,g=rx,o=rx)
+  umask 077      # set for this session
+  echo "umask 027" >> ~/.bashrc   # permanent
+
+`Always run `umask` FIRST` before predicting new-file perms.
+Never assume the default — it varies by distro and user type.
+
+# /tmp — temporary storage
+
+`Purpose` — world-writable scratch space for temp files.
+Not for user data. Not for anything you need to survive a reboot.
+
+`Cleanup mechanisms`
+  - tmpfs (RAM): /tmp wiped on EVERY reboot
+  - systemd-tmpfiles: deletes files older than 10 days (default)
+  - custom rules in /etc/tmpfiles.d/
+
+`Check which one`
+  mount | grep ' /tmp '
+
+`Safety` — /tmp is `drwxrwxrwt` (1777) — the sticky bit
+means you can only delete YOUR OWN files. Canonical sticky-bit example.
+
+`/var/tmp` vs `/tmp`
+  /tmp      → ephemeral, wiped on reboot (or 10-day age)
+  /var/tmp  → on disk, survives reboot, 30-day age
+
+`For the bootcamp` — NEVER store portfolio evidence in /tmp.
+Use ~/Desktop/iam-bootcamp-portfolio/ or the PSSD.
+
+# Combined special bits (g+s + t)
+
+  chmod 3770 folder   →  drwxrws--T
+    3 = setgid(2) + sticky(1)
+    s in group triad  = setgid (inherits group)
+    T in others triad = sticky, uppercase because others has NO execute
+
+  t (lowercase) = sticky + execute on others (others has x)
+  T (uppercase) = sticky WITHOUT execute on others (others has no x)
+  Same rule for s/S in owner/group triads.
+
+Real use case: /srv/iamlab/drop — team can add files,
+new files inherit iam-admins group, no one can delete each other's files.
