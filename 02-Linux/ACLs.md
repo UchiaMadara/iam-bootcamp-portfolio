@@ -289,3 +289,46 @@ This lab is the direct parallel to:
 - Week 5 (AD): "Advanced permissions" on a shared drive for one user
 - Week 6 (JML): revoking a single user's access on offboarding
 - Week 7 (Governance): auditing who has ACL access and why
+
+# Checkpoint Answers
+
+`Q1 — Why does setgid matter on the drop box?`
+
+Without setgid, a file created in the drop folder inherits the CREATOR's
+primary group, not the folder's group. If taylor (primary group iam-hr)
+creates a file, its group becomes iam-hr — so iam-admins members lose
+group access, and the folder stops being truly shared.
+
+setgid fixes that: every new file inherits the folder's group iam-admins,
+regardless of who created it.
+
+IMPORTANT: setgid is ONLY about group inheritance. It says nothing about
+deletion. Deletion is controlled by the sticky bit, not setgid.
+
+`Q2 — Why does the sticky bit matter on the drop box?`
+
+The sticky bit prevents a user from deleting or renaming a file they
+don't own, even if they have write permission to the parent folder.
+
+In Lab B, alex had write access to the drop folder (group iam-admins rwx),
+but got `Operation not permitted` when trying to `rm` taylor's file —
+because the sticky bit restricts deletion to the file's owner (and root).
+Taylor could delete her own file.
+
+Without sticky, a shared writable folder would let anyone delete anyone's
+files. The sticky bit is what makes a "drop box" safe.
+
+`Q3 — When would you use an ACL instead of changing group membership?`
+
+Use an ACL when ONE specific user needs access that the group model
+can't express cleanly.
+
+Three real cases:
+1. New starter needs read-only while the rest of the team has write.
+2. A senior member needs extra access beyond the group default.
+3. Inter-department sharing — one person from Finance needs to read
+   an HR folder without joining the HR group.
+
+Why not just create a new group? It's heavier: extra group in the directory,
+extra membership to track, harder to audit and revoke. ACL = surgical,
+group membership = broad. Use ACL when the need is one person, not the group.
